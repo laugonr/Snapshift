@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnapShift - Image Tools</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg p-6 space-y-6">
+    <h1 class="text-3xl font-bold text-center text-emerald-600">SnapShift</h1>
+    <p class="text-center text-gray-500">Convert or Resize your images in one simple interface</p>
+
+    <!-- Tabs -->
+    <div class="flex justify-center space-x-4 border-b pb-2">
+      <button id="convertTab" class="tab-button text-emerald-600 font-semibold border-b-2 border-emerald-600">Convert</button>
+      <button id="resizeTab" class="tab-button text-gray-500 hover:text-emerald-600">Resize</button>
+    </div>
+
+    <!-- Shared Upload Area -->
+    <div id="uploadZone" class="border-2 border-dashed border-gray-300 p-8 text-center rounded-lg cursor-pointer hover:border-emerald-500 transition">
+      <p id="uploadText" class="text-gray-500">Click or drag an image here to upload</p>
+      <input type="file" id="imageInput" accept="image/*" class="hidden" />
+    </div>
+
+    <!-- Image Preview -->
+    <div id="previewContainer" class="mt-4 hidden">
+      <img id="preview" class="rounded-lg mx-auto shadow max-h-64" />
+      <p id="imageInfo" class="mt-2 text-sm text-gray-500"></p>
+    </div>
+
+    <!-- Convert Tab -->
+    <div id="convertPanel" class="tab-panel">
+      <form id="convertForm" enctype="multipart/form-data" class="space-y-4">
+        <div>
+          <label for="format" class="block mb-1 font-medium">Output Format:</label>
+          <select name="format" id="format" class="w-full border p-2 rounded">
+            <option value="PNG">PNG</option>
+            <option value="JPEG">JPEG</option>
+            <option value="PDF">PDF</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded">
+          Convert Now
+        </button>
+      </form>
+    </div>
+
+    <!-- Resize Tab -->
+    <div id="resizePanel" class="tab-panel hidden">
+      <form id="resizeForm" class="space-y-4">
+        <div class="flex space-x-2">
+          <button type="button" class="resize-mode bg-emerald-600 text-white px-3 py-1 rounded">By Dimensions</button>
+          <button type="button" class="resize-mode bg-gray-200 text-gray-700 px-3 py-1 rounded">As Percentage</button>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <div class="w-1/2">
+            <label for="resizeWidth" class="block text-sm font-medium">Width</label>
+            <input type="number" id="resizeWidth" class="w-full border p-2 rounded" placeholder="e.g. 1024">
+          </div>
+          <div class="w-1/2">
+            <label for="resizeHeight" class="block text-sm font-medium">Height</label>
+            <input type="number" id="resizeHeight" class="w-full border p-2 rounded" placeholder="e.g. 768">
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <input type="checkbox" id="lockAspectRatio" checked>
+          <label for="lockAspectRatio" class="text-sm">Lock Aspect Ratio</label>
+        </div>
+
+        <details class="bg-gray-50 rounded p-4">
+          <summary class="cursor-pointer font-medium text-gray-700">Export Settings</summary>
+          <div class="mt-2 space-y-2">
+            <div>
+              <label class="block text-sm">Target File Size (optional)</label>
+              <div class="flex items-center space-x-2">
+                <input type="number" class="w-full border p-2 rounded" placeholder="Enter size">
+                <select class="border p-2 rounded">
+                  <option>KB</option>
+                  <option>MB</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm">Save Image As</label>
+              <select class="w-full border p-2 rounded">
+                <option>Original</option>
+                <option>PNG</option>
+                <option>JPEG</option>
+                <option>PDF</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 rounded">
+          Resize Now
+        </button>
+      </form>
+    </div>
+
+    <p id="status" class="text-center text-sm text-gray-600"></p>
+  </div>
+
+  <script>
+    const convertTab = document.getElementById("convertTab");
+    const resizeTab = document.getElementById("resizeTab");
+    const convertPanel = document.getElementById("convertPanel");
+    const resizePanel = document.getElementById("resizePanel");
+    const uploadZone = document.getElementById("uploadZone");
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const previewContainer = document.getElementById("previewContainer");
+    const imageInfo = document.getElementById("imageInfo");
+    const status = document.getElementById("status");
+    let uploadedFile = null;
+
+    convertTab.addEventListener("click", () => {
+      convertTab.classList.add("text-emerald-600", "font-semibold", "border-b-2", "border-emerald-600");
+      resizeTab.classList.remove("text-emerald-600", "font-semibold", "border-b-2", "border-emerald-600");
+      resizeTab.classList.add("text-gray-500");
+      convertPanel.classList.remove("hidden");
+      resizePanel.classList.add("hidden");
+    });
+
+    resizeTab.addEventListener("click", () => {
+      resizeTab.classList.add("text-emerald-600", "font-semibold", "border-b-2", "border-emerald-600");
+      convertTab.classList.remove("text-emerald-600", "font-semibold", "border-b-2", "border-emerald-600");
+      convertTab.classList.add("text-gray-500");
+      resizePanel.classList.remove("hidden");
+      convertPanel.classList.add("hidden");
+    });
+
+    uploadZone.addEventListener("click", () => imageInput.click());
+
+    uploadZone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      uploadZone.classList.add("border-emerald-500", "bg-gray-50");
+    });
+
+    uploadZone.addEventListener("dragleave", () => {
+      uploadZone.classList.remove("border-emerald-500", "bg-gray-50");
+    });
+
+    uploadZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove("border-emerald-500", "bg-gray-50");
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        imageInput.files = files;
+        handleImageUpload(files[0]);
+      }
+    });
+
+    imageInput.addEventListener("change", () => {
+      if (imageInput.files.length > 0) {
+        handleImageUpload(imageInput.files[0]);
+      }
+    });
+
+    function handleImageUpload(file) {
+      uploadedFile = file;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        preview.src = e.target.result;
+        previewContainer.classList.remove("hidden");
+        preview.onload = () => {
+          imageInfo.textContent = `Original size: ${preview.naturalWidth} × ${preview.naturalHeight}px`;
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    document.getElementById("convertForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!uploadedFile) {
+        status.textContent = "❗ Please upload an image first.";
+        return;
+      }
+      const format = document.getElementById("format").value;
+      const formData = new FormData();
+      formData.append("image", uploadedFile);
+      formData.append("format", format);
+
+      status.textContent = "⏳ Converting...";
+
+      try {
+        const res = await fetch("/convert", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Conversion failed");
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `converted_image.${format.toLowerCase()}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        status.textContent = "✅ Download started!";
+      } catch (err) {
+        status.textContent = "❌ Error: " + err.message;
+      }
+    });
+
+    document.getElementById("resizeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!uploadedFile) {
+        status.textContent = "❗ Please upload an image first.";
+        return;
+      }
+      const width = parseInt(document.getElementById("resizeWidth").value);
+      const height = parseInt(document.getElementById("resizeHeight").value);
+      const lockAspect = document.getElementById("lockAspectRatio").checked;
+
+      if (!width || !height) {
+        status.textContent = "❗ Please enter valid dimensions.";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", uploadedFile);
+      formData.append("width", width);
+      formData.append("height", height);
+      formData.append("lock_aspect", lockAspect);
+
+      status.textContent = "⏳ Resizing...";
+
+      try {
+        const res = await fetch("/resize", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Resize failed");
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "resized_image.png";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        status.textContent = "✅ Download started!";
+      } catch (err) {
+        status.textContent = "❌ Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
