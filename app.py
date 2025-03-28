@@ -1,7 +1,6 @@
-from flask import Flask, request, send_file, render_template, jsonify
+from flask import Flask, request, send_file, render_template
 from PIL import Image
 from io import BytesIO
-from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 
@@ -15,26 +14,32 @@ def convert_image():
     output_format = request.form.get('format', 'PNG').upper()
 
     if not image_file:
-        return jsonify({"error": "No image uploaded"}), 400
+        return "No image uploaded", 400
 
-    img = Image.open(image_file.stream).convert("RGB")
-    buffer = BytesIO()
+    try:
+        img = Image.open(image_file.stream)
+        buffer = BytesIO()
 
-    if output_format == 'PDF':
-        pdf = canvas.Canvas(buffer)
-        img_width, img_height = img.size
-        buffer_img = BytesIO()
-        img.save(buffer_img, format='PNG')
-        buffer_img.seek(0)
-        pdf.drawInlineImage(buffer_img, 0, 0, width=img_width, height=img_height)
-        pdf.showPage()
-        pdf.save()
+        if output_format == 'PDF':
+            if img.mode in ['RGBA', 'P', 'LA']:
+                img = img.convert('RGB')
+            img.save(buffer, format='PDF')
+            buffer.seek(0)
+            return send_file(
+                buffer,
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name='converted_image.pdf'
+            )
+
+        img.save(buffer, format=output_format)
         buffer.seek(0)
-        return send_file(buffer, mimetype='application/pdf', as_attachment=True, download_name='converted.pdf')
+        mimetype = f'image/{output_format.lower()}'
+        return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=f'converted_image.{output_format.lower()}')
 
-    img.save(buffer, format=output_format)
-    buffer.seek(0)
-    return send_file(buffer, mimetype=f'image/{output_format.lower()}', as_attachment=True, download_name=f'converted.{output_format.lower()}')
+    except Exception as e:
+        print("[ERROR] PDF Conversion failed:", str(e))
+        return f"Error during conversion: {str(e)}", 500
 
 @app.route('/resize', methods=['POST'])
 def resize_image():
@@ -44,7 +49,7 @@ def resize_image():
     lock_aspect = request.form.get('lock_aspect', 'false') == 'true'
 
     if not image_file or width <= 0 or height <= 0:
-        return jsonify({"error": "Missing image or invalid dimensions"}), 400
+        return "Missing image or invalid dimensions", 400
 
     img = Image.open(image_file.stream)
 
@@ -61,8 +66,5 @@ def resize_image():
     buffer.seek(0)
     return send_file(buffer, mimetype='image/png', as_attachment=True, download_name='resized_image.png')
 
-import os
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(debug=True, port=5050)
