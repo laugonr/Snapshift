@@ -81,12 +81,5 @@ snapshift/
 
 ---
 
-## 📬 Contact
-
-Got questions or ideas?
-Open an issue or reach out at `your.email@example.com`
-
----
-
 > Built with 💻 by Ruben
 
