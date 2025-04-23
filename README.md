@@ -81,5 +81,11 @@ snapshift/
 
 ---
 
+## 🖼 Screenshot
+
+Here’s what SnapShift looks like in action:
+
+![SnapShift UI](static/screenshot.png)
+
 > Built with 💻 by Ruben
 
