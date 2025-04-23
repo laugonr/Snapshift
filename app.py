@@ -1,15 +1,32 @@
+"""
+SnapShift - Flask application for image conversion and resizing.
+"""
+
 from flask import Flask, request, send_file, render_template
 from PIL import Image
 from io import BytesIO
+import os
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+    @app.route('/')
+    def home():
+        return render_template('index.html')
 
-@app.route('/convert', methods=['POST'])
-def convert_image():
+    @app.route('/convert', methods=['POST'])
+    def convert_image():
+        return handle_convert()
+
+    @app.route('/resize', methods=['POST'])
+    def resize_image():
+        return handle_resize()
+
+    return app
+
+app = create_app()
+
+def handle_convert():
     image_file = request.files.get('image')
     output_format = request.form.get('format', 'PNG').upper()
 
@@ -24,25 +41,21 @@ def convert_image():
             if img.mode in ['RGBA', 'P', 'LA']:
                 img = img.convert('RGB')
             img.save(buffer, format='PDF')
-            buffer.seek(0)
-            return send_file(
-                buffer,
-                mimetype='application/pdf',
-                as_attachment=True,
-                download_name='converted_image.pdf'
-            )
+            mimetype = 'application/pdf'
+            filename = 'converted_image.pdf'
+        else:
+            img.save(buffer, format=output_format)
+            mimetype = f'image/{output_format.lower()}'
+            filename = f'converted_image.{output_format.lower()}'
 
-        img.save(buffer, format=output_format)
         buffer.seek(0)
-        mimetype = f'image/{output_format.lower()}'
-        return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=f'converted_image.{output_format.lower()}')
+        return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=filename)
 
     except Exception as e:
-        print("[ERROR] PDF Conversion failed:", str(e))
+        print("[ERROR] Image conversion failed:", str(e))
         return f"Error during conversion: {str(e)}", 500
 
-@app.route('/resize', methods=['POST'])
-def resize_image():
+def handle_resize():
     image_file = request.files.get('image')
     width = int(request.form.get('width', 0))
     height = int(request.form.get('height', 0))
@@ -65,8 +78,6 @@ def resize_image():
     resized.save(buffer, format='PNG')
     buffer.seek(0)
     return send_file(buffer, mimetype='image/png', as_attachment=True, download_name='resized_image.png')
-
-import os
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
