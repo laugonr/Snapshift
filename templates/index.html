@@ -19,14 +19,14 @@
         <h1 class="text-2xl font-extrabold text-gray-800">SnapShift</h1>
       </div>
       <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
-        <button id="convertTab" class="tab-button px-4 py-1 rounded-md font-medium bg-red-500 text-white shadow-md">Convert</button>
-        <button id="resizeTab" class="tab-button px-4 py-1 rounded-md font-medium text-gray-600 hover:text-gray-900">Resize</button>
+        <button id="convertTab" class="tab-button px-4 py-1 rounded-md font-medium bg-red-500 text-white shadow-md transition-transform duration-300 hover:scale-105">Convert</button>
+        <button id="resizeTab" class="tab-button px-4 py-1 rounded-md font-medium text-gray-600 hover:text-gray-900 transition-transform duration-300 hover:scale-105">Resize</button>
       </div>
     </header>
     <p class="text-sm text-gray-500 ml-1">Simple image cropping & conversion ⚡</p>
 
     <!-- Upload -->
-    <div id="uploadZone" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 p-6 rounded-xl hover:border-red-400 hover:bg-red-50 cursor-pointer transition-all">
+    <div id="uploadZone" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 p-6 rounded-xl hover:border-red-400 hover:bg-red-50 cursor-pointer transition-all transition-transform duration-300">
       <img src="https://img.icons8.com/color/96/image.png" class="w-16 h-16 mb-2" />
       <p class="text-gray-600 text-sm">
         <strong>Drag & drop</strong> an image, or <span class="font-semibold text-black">browse</span>
@@ -36,7 +36,7 @@
 
     <!-- Preview -->
     <div id="previewContainer" class="hidden mt-4 text-center">
-      <img id="preview" class="w-32 h-auto rounded-xl border border-gray-200 shadow-md mx-auto" />
+      <img id="preview" class="w-32 h-auto rounded-xl border border-gray-200 shadow-md mx-auto opacity-0 transition-opacity duration-700" />
       <p id="imageInfo" class="text-xs text-gray-500 mt-2"></p>
     </div>
 
@@ -83,7 +83,7 @@
     <p id="status" class="text-sm text-center text-gray-500"></p>
   </main>
 
-  <footer class="mt-8 text-xs text-gray-400 text-center">
+  <footer class="mt-8 text-xs text-gray-400 text-bottm">
     &copy; 2025 SnapShift. All rights reserved.
   </footer>
 

@@ -12,15 +12,15 @@ let uploadedFile = null;
 
 // Tab switching
 convertTab.addEventListener("click", () => {
-  convertTab.classList.add("bg-red-500", "text-white", "shadow-md");
-  resizeTab.classList.remove("bg-red-500", "text-white", "shadow-md");
+  convertTab.classList.add("bg-red-500", "text-white", "shadow-md", "scale-105", "transition", "duration-300");
+  resizeTab.classList.remove("bg-red-500", "text-white", "shadow-md", "scale-105", "transition", "duration-300");
   convertPanel.classList.remove("hidden");
   resizePanel.classList.add("hidden");
 });
 
 resizeTab.addEventListener("click", () => {
-  resizeTab.classList.add("bg-red-500", "text-white", "shadow-md");
-  convertTab.classList.remove("bg-red-500", "text-white", "shadow-md");
+  resizeTab.classList.add("bg-red-500", "text-white", "shadow-md", "scale-105", "transition", "duration-300");
+  convertTab.classList.remove("bg-red-500", "text-white", "shadow-md", "scale-105", "transition", "duration-300");
   convertPanel.classList.add("hidden");
   resizePanel.classList.remove("hidden");
 });
@@ -31,15 +31,18 @@ uploadZone.addEventListener("click", () => imageInput.click());
 uploadZone.addEventListener("dragover", (e) => {
   e.preventDefault();
   uploadZone.classList.add("border-red-400", "bg-red-50");
+  uploadZone.classList.add("scale-105", "transition", "duration-300");
 });
 
 uploadZone.addEventListener("dragleave", () => {
   uploadZone.classList.remove("border-red-400", "bg-red-50");
+  uploadZone.classList.remove("scale-105");
 });
 
 uploadZone.addEventListener("drop", (e) => {
   e.preventDefault();
   uploadZone.classList.remove("border-red-400", "bg-red-50");
+  uploadZone.classList.remove("scale-105");
   const files = e.dataTransfer.files;
   if (files.length > 0) {
     imageInput.files = files;
@@ -58,6 +61,8 @@ function handleImageUpload(file) {
   const reader = new FileReader();
   reader.onload = (e) => {
     preview.src = e.target.result;
+    preview.classList.remove("opacity-0");
+    preview.classList.add("opacity-100", "transition-opacity", "duration-700");
     previewContainer.classList.remove("hidden");
     preview.onload = () => {
       imageInfo.textContent = `Original size: ${preview.naturalWidth} × ${preview.naturalHeight}px`;

@@ -6,6 +6,9 @@ from flask import Flask, request, send_file, render_template
 from PIL import Image
 from io import BytesIO
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 def create_app():
     app = Flask(__name__)
@@ -33,6 +36,9 @@ def handle_convert():
     if not image_file:
         return "No image uploaded", 400
 
+    if not image_file.mimetype.startswith("image/"):
+        return "Invalid file type", 400
+
     try:
         img = Image.open(image_file.stream)
         buffer = BytesIO()
@@ -52,7 +58,7 @@ def handle_convert():
         return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=filename)
 
     except Exception as e:
-        print("[ERROR] Image conversion failed:", str(e))
+        app.logger.error("Image conversion failed: %s", str(e))
         return f"Error during conversion: {str(e)}", 500
 
 def handle_resize():
@@ -63,6 +69,12 @@ def handle_resize():
 
     if not image_file or width <= 0 or height <= 0:
         return "Missing image or invalid dimensions", 400
+
+    if not image_file.mimetype.startswith("image/"):
+        return "Invalid file type", 400
+
+    if width > 10000 or height > 10000:
+        return "Dimensions too large", 400
 
     img = Image.open(image_file.stream)
 
