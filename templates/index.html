@@ -8,38 +8,39 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col items-center justify-center p-8">
+  <!-- Header -->
   <div class="w-full max-w-xl bg-white rounded-2xl shadow-md p-6 space-y-6">
-    <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="w-10 h-10" alt="SnapShift Logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="w-10 h-10" alt="SnapShift Logo" />
         <h1 class="text-2xl font-extrabold text-gray-800">SnapShift</h1>
       </div>
       <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
         <button id="convertTab" class="tab-button px-4 py-1 rounded-md font-medium bg-red-500 text-white shadow-md">Convert</button>
-        <button id="resizeTab" class="tab-button px-4 py-1 rounded-md font-medium text-gray-600 hover:text-black">Resize</button>
+        <button id="resizeTab" class="tab-button px-4 py-1 rounded-md font-medium text-gray-600 hover:text-gray-900">Resize</button>
       </div>
     </div>
     <p class="text-sm text-gray-500 ml-1">Simple image cropping & conversion ⚡</p>
 
-    <!-- Upload Area -->
+    <!-- Upload -->
     <div id="uploadZone" class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 p-6 rounded-xl hover:border-red-400 hover:bg-red-50 cursor-pointer transition-all">
-      <img src="https://img.icons8.com/color/96/image.png" class="w-16 h-16 mb-2"/>
-      <p class="text-gray-600 text-sm"> <strong>Drag & drop</strong> an image, or <span class="font-semibold text-black">browse</span> </p>
-      <input type="file" id="imageInput" accept="image/*" class="hidden">
+      <img src="https://img.icons8.com/color/96/image.png" class="w-16 h-16 mb-2" />
+      <p class="text-gray-600 text-sm">
+        <strong>Drag & drop</strong> an image, or <span class="font-semibold text-black">browse</span>
+      </p>
+      <input type="file" id="imageInput" accept="image/*" class="hidden" />
     </div>
 
-    <!-- Preview (shared) -->
+    <!-- Preview -->
     <div id="previewContainer" class="hidden mt-4 text-center">
       <img id="preview" class="w-32 h-auto rounded-xl border border-gray-200 shadow-md mx-auto" />
       <p id="imageInfo" class="text-xs text-gray-500 mt-2"></p>
     </div>
 
-    <!-- Convert Form -->
+    <!-- Convert -->
     <div id="convertPanel" class="tab-panel">
       <form id="convertForm" class="space-y-4">
         <div>
@@ -56,21 +57,21 @@
       </form>
     </div>
 
-    <!-- Resize Panel -->
+    <!-- Resize -->
     <div id="resizePanel" class="tab-panel hidden">
       <form id="resizeForm" class="space-y-4">
         <div class="flex justify-between gap-4">
           <div class="w-1/2">
             <label for="resizeWidth" class="block text-sm font-medium text-gray-700">Width</label>
-            <input type="number" id="resizeWidth" class="w-full border border-gray-300 rounded-md p-2" placeholder="Width" required min="1">
+            <input type="number" id="resizeWidth" class="w-full border border-gray-300 rounded-md p-2" placeholder="Width" required min="1" />
           </div>
           <div class="w-1/2">
             <label for="resizeHeight" class="block text-sm font-medium text-gray-700">Height</label>
-            <input type="number" id="resizeHeight" class="w-full border border-gray-300 rounded-md p-2" placeholder="Height" required min="1">
+            <input type="number" id="resizeHeight" class="w-full border border-gray-300 rounded-md p-2" placeholder="Height" required min="1" />
           </div>
         </div>
         <div class="flex items-center space-x-2">
-          <input type="checkbox" id="lockAspectRatio" checked>
+          <input type="checkbox" id="lockAspectRatio" checked />
           <label for="lockAspectRatio" class="text-sm text-gray-600">Lock Aspect Ratio</label>
         </div>
         <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-2 rounded-xl text-lg font-semibold shadow transition-all">
@@ -82,124 +83,6 @@
     <p id="status" class="text-sm text-center text-gray-500"></p>
   </div>
 
-  <script>
-    const convertTab = document.getElementById("convertTab");
-    const resizeTab = document.getElementById("resizeTab");
-    const convertPanel = document.getElementById("convertPanel");
-    const resizePanel = document.getElementById("resizePanel");
-    const uploadZone = document.getElementById("uploadZone");
-    const imageInput = document.getElementById("imageInput");
-    const preview = document.getElementById("preview");
-    const previewContainer = document.getElementById("previewContainer");
-    const imageInfo = document.getElementById("imageInfo");
-    const status = document.getElementById("status");
-    let uploadedFile = null;
-
-    convertTab.addEventListener("click", () => {
-      convertTab.classList.add("bg-red-500", "text-white", "shadow-md");
-      resizeTab.classList.remove("bg-red-500", "text-white", "shadow-md");
-      convertPanel.classList.remove("hidden");
-      resizePanel.classList.add("hidden");
-    });
-
-    resizeTab.addEventListener("click", () => {
-      resizeTab.classList.add("bg-red-500", "text-white", "shadow-md");
-      convertTab.classList.remove("bg-red-500", "text-white", "shadow-md");
-      convertPanel.classList.add("hidden");
-      resizePanel.classList.remove("hidden");
-    });
-
-    uploadZone.addEventListener("click", () => imageInput.click());
-    uploadZone.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      uploadZone.classList.add("border-red-400", "bg-red-50");
-    });
-    uploadZone.addEventListener("dragleave", () => {
-      uploadZone.classList.remove("border-red-400", "bg-red-50");
-    });
-    uploadZone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      uploadZone.classList.remove("border-red-400", "bg-red-50");
-      const files = e.dataTransfer.files;
-      if (files.length > 0) {
-        imageInput.files = files;
-        handleImageUpload(files[0]);
-      }
-    });
-
-    imageInput.addEventListener("change", () => {
-      if (imageInput.files.length > 0) {
-        handleImageUpload(imageInput.files[0]);
-      }
-    });
-
-    function handleImageUpload(file) {
-      uploadedFile = file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        preview.src = e.target.result;
-        previewContainer.classList.remove("hidden");
-        preview.onload = () => {
-          imageInfo.textContent = `Original size: ${preview.naturalWidth} × ${preview.naturalHeight}px`;
-        };
-      };
-      reader.readAsDataURL(file);
-    }
-
-    document.getElementById("convertForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!uploadedFile) return status.textContent = "❗ Upload an image first.";
-      const format = document.getElementById("format").value;
-      const formData = new FormData();
-      formData.append("image", uploadedFile);
-      formData.append("format", format);
-      status.textContent = "⏳ Converting...";
-      try {
-        const res = await fetch("/convert", { method: "POST", body: formData });
-        if (!res.ok) throw new Error("Conversion failed");
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `converted_image.${format.toLowerCase()}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        status.textContent = "✅ Download started!";
-      } catch (err) {
-        status.textContent = "❌ Error: " + err.message;
-      }
-    });
-
-    document.getElementById("resizeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!uploadedFile) return status.textContent = "❗ Upload an image first.";
-      const width = parseInt(document.getElementById("resizeWidth").value || "0");
-      const height = parseInt(document.getElementById("resizeHeight").value || "0");
-      const lockAspect = document.getElementById("lockAspectRatio").checked;
-      if (!width || !height) return status.textContent = "❗ Please enter dimensions.";
-      const formData = new FormData();
-      formData.append("image", uploadedFile);
-      formData.append("width", width);
-      formData.append("height", height);
-      formData.append("lock_aspect", lockAspect);
-      status.textContent = "⏳ Resizing...";
-      try {
-        const res = await fetch("/resize", { method: "POST", body: formData });
-        if (!res.ok) throw new Error("Resize failed");
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "resized_image.png";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        status.textContent = "✅ Download started!";
-      } catch (err) {
-        status.textContent = "❌ Error: " + err.message;
-      }
-    });
-  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
