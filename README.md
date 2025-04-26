@@ -30,7 +30,6 @@ SnapShift is a modern, clean, and fast image tool that allows you to:
 
 ## 📁 Project Structure
 
----
 snapshift/
 ├── app.py                 # Flask backend app
 ├── templates/
@@ -42,11 +41,6 @@ snapshift/
 └── README.md              # Project documentation
 
 ## 🛠 Setup & Run Locally
-
-```bash
----
-
-## 🛠 How to Set Up Locally
 
 ```bash
 # Clone the repository
@@ -62,39 +56,27 @@ pip install -r requirements.txt
 
 # Run the Flask app
 python app.py
+```
 
 Then visit: [http://localhost:5050](http://localhost:5050)
 
 ---
 
-## 📁 Project Structure
-
-```
-snapshift/
-├── app.py                 # Flask backend
-├── templates/
-│   └── index.html         # Frontend interface
-├── static/
-│   └── logo.png           # App icon / favicon
-└── requirements.txt       # Dependencies
-```
-
----
-
 ## 🧪 How to use Snapshift
 
-	1.	Drag and drop or upload an image file (PNG, JPEG, etc.)
-	2.	Choose to Convert the format or Resize the dimensions
-	3.	Click the Convert or Resize button
-	4.	Wait for the spinner to finish processing
-	5.	Download the processed file automatically!
-
+1. Drag and drop or upload an image file (PNG, JPEG, etc.)  
+2. Choose to Convert the format or Resize the dimensions  
+3. Click the Convert or Resize button  
+4. Wait for the spinner to finish processing  
+5. Download the processed file automatically!
 
 ---
 
 ## 🌐 Live Demo
 
- ✨ [Coming Soon - Hosted on Render.com] ✨
+> ✅ Hosted Live: [SnapShift on Render](https://your-render-url.onrender.com)
+
+_(Replace with your actual Render URL if needed.)_
 
 ---
 
@@ -111,8 +93,6 @@ Here’s what SnapShift looks like in action:
 
 ![SnapShift UI](static/screenshot.png)
 
-
----
 ---
 
 ## 📄 License
@@ -121,3 +101,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 > Built with 💻 by Ruben
 
+---
+
+## 🚀 Deployment Notes
+
+SnapShift is a Python Flask web application and is deployed on Render.com.  
+It cannot be hosted directly through GitHub Pages because it requires a backend server.  
+The code is available publicly on GitHub for review, but the live app runs on Render.
+
+---
