@@ -11,12 +11,33 @@ const imageInfo = document.getElementById("imageInfo");
 const status = document.getElementById("status");
 let uploadedFile = null;
 
-// Success message control
-function showSuccess() {
-  document.getElementById('successMessage').classList.remove('hidden');
+// Helper functions
+function showLoading() {
+  document.getElementById('loadingSpinner').classList.remove('hidden');
+  status.textContent = "⏳ Processing...";
 }
+
+function hideLoading() {
+  document.getElementById('loadingSpinner').classList.add('hidden');
+  status.textContent = "";
+}
+
+function showSuccess() {
+  // Assuming there is a success indicator elsewhere, placeholder for symmetry
+}
+
 function hideSuccess() {
-  document.getElementById('successMessage').classList.add('hidden');
+  // Assuming there is a success indicator elsewhere, placeholder for symmetry
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
 // Tab switching
@@ -82,6 +103,7 @@ function handleImageUpload(file) {
 document.getElementById('convertForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  status.textContent = "";
   showLoading();
   hideSuccess();
 
@@ -93,13 +115,7 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
     const res = await fetch("/convert", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Conversion failed");
     const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "converted_image.png";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    triggerDownload(blob, "converted_image.png");
     hideLoading();
     showSuccess();
     status.textContent = "✅ Download started!";
@@ -113,31 +129,26 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
 document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!uploadedFile) return status.textContent = "❗ Upload an image first.";
-  
+
   const width = parseInt(document.getElementById("resizeWidth").value || "0");
   const height = parseInt(document.getElementById("resizeHeight").value || "0");
   const lockAspect = document.getElementById("lockAspectRatio").checked;
-  
+
   if (!width || !height) return status.textContent = "❗ Please enter dimensions.";
-  
+
   const formData = new FormData();
   formData.append("image", uploadedFile);
   formData.append("width", width);
   formData.append("height", height);
   formData.append("lock_aspect", lockAspect);
-  
+
+  status.textContent = "";
   status.textContent = "⏳ Resizing...";
   try {
     const res = await fetch("/resize", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Resize failed");
     const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "resized_image.png";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    triggerDownload(blob, "resized_image.png");
     status.textContent = "✅ Download started!";
   } catch (err) {
     status.textContent = "❌ Error: " + err.message;
