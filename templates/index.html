@@ -10,17 +10,53 @@
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.8s ease-out;
+    }
+    
+    /* Dark Mode Styles */
+    .dark body {
+      background-color: #1a202c;
+    }
+    .dark .container {
+      background-color: #2d3748;
+      color: #e2e8f0;
+    }
+    .dark #uploadZone {
+      background-color: #4a5568;
+      border-color: #718096;
+    }
+    .dark button {
+      background-color: #e53e3e;
+    }
+    .dark input, .dark select {
+      background-color: #2d3748;
+      color: #e2e8f0;
+    }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center p-8">
-  <main class="w-full max-w-xl bg-white rounded-2xl shadow-md p-6 space-y-6">
-    <header class="flex items-center justify-between">
+<body class="bg-gray-50 min-h-screen flex flex-col p-6">
+<main class="w-full max-w-xl bg-white rounded-2xl shadow-md p-4 md:p-6 space-y-6 flex-grow mx-auto animate-fade-in">
+    <header class="space-y-4">
       <div class="flex items-center space-x-3">
         <img src="{{ url_for('static', filename='logo.png') }}" class="w-10 h-10" alt="SnapShift Logo" />
         <h1 class="text-2xl font-extrabold text-gray-800">SnapShift</h1>
       </div>
-      <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
-        <button id="convertTab" class="tab-button px-4 py-1 rounded-md font-medium bg-red-500 text-white shadow-md transition-transform duration-300 hover:scale-105">Convert</button>
-        <button id="resizeTab" class="tab-button px-4 py-1 rounded-md font-medium text-gray-600 hover:text-gray-900 transition-transform duration-300 hover:scale-105">Resize</button>
+
+      <div class="flex justify-between items-center">
+        <button id="toggleDarkMode" class="text-xs text-gray-600 hover:text-gray-800 underline">
+          🌙 Toggle Dark Mode
+        </button>
+
+        <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
+          <button id="convertTab" class="tab-button px-4 py-1 rounded-md font-medium bg-red-500 text-white shadow-md transition-transform duration-300 hover:scale-105">Convert</button>
+          <button id="resizeTab" class="tab-button px-4 py-1 rounded-md font-medium text-gray-600 hover:text-gray-900 transition-transform duration-300 hover:scale-105">Resize</button>
+        </div>
       </div>
     </header>
     <p class="text-sm text-gray-500 ml-1">Simple image cropping & conversion ⚡</p>
@@ -81,9 +117,13 @@
     </div>
 
     <p id="status" class="text-sm text-center text-gray-500"></p>
+    <p id="successMessage" class="hidden text-green-500 text-center text-sm mt-4">✅ Image successfully processed!</p>
+    <div id="loadingSpinner" class="hidden flex justify-center mt-4">
+      <div class="w-8 h-8 border-4 border-dashed rounded-full animate-spin border-red-400"></div>
+    </div>
   </main>
 
-  <footer class="mt-8 text-xs text-gray-400 text-bottm">
+  <footer class="mt-8 text-xs text-gray-400 text-center">
     &copy; 2025 SnapShift. All rights reserved.
   </footer>
 

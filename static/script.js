@@ -1,3 +1,4 @@
+// Get elements
 const convertTab = document.getElementById("convertTab");
 const resizeTab = document.getElementById("resizeTab");
 const convertPanel = document.getElementById("convertPanel");
@@ -9,6 +10,14 @@ const previewContainer = document.getElementById("previewContainer");
 const imageInfo = document.getElementById("imageInfo");
 const status = document.getElementById("status");
 let uploadedFile = null;
+
+// Success message control
+function showSuccess() {
+  document.getElementById('successMessage').classList.remove('hidden');
+}
+function hideSuccess() {
+  document.getElementById('successMessage').classList.add('hidden');
+}
 
 // Tab switching
 convertTab.addEventListener("click", () => {
@@ -25,24 +34,21 @@ resizeTab.addEventListener("click", () => {
   resizePanel.classList.remove("hidden");
 });
 
-// Upload & Preview
+// Upload and Preview
 uploadZone.addEventListener("click", () => imageInput.click());
 
 uploadZone.addEventListener("dragover", (e) => {
   e.preventDefault();
-  uploadZone.classList.add("border-red-400", "bg-red-50");
-  uploadZone.classList.add("scale-105", "transition", "duration-300");
+  uploadZone.classList.add("border-red-400", "bg-red-50", "scale-105", "transition", "duration-300");
 });
 
 uploadZone.addEventListener("dragleave", () => {
-  uploadZone.classList.remove("border-red-400", "bg-red-50");
-  uploadZone.classList.remove("scale-105");
+  uploadZone.classList.remove("border-red-400", "bg-red-50", "scale-105");
 });
 
 uploadZone.addEventListener("drop", (e) => {
   e.preventDefault();
-  uploadZone.classList.remove("border-red-400", "bg-red-50");
-  uploadZone.classList.remove("scale-105");
+  uploadZone.classList.remove("border-red-400", "bg-red-50", "scale-105");
   const files = e.dataTransfer.files;
   if (files.length > 0) {
     imageInput.files = files;
@@ -65,21 +71,21 @@ function handleImageUpload(file) {
     preview.classList.add("opacity-100", "transition-opacity", "duration-700");
     previewContainer.classList.remove("hidden");
     preview.onload = () => {
-      imageInfo.textContent = `Original size: ${preview.naturalWidth} × ${preview.naturalHeight}px`;
+      const fileSizeKB = (file.size / 1024).toFixed(1);
+      imageInfo.textContent = `${file.name} (${fileSizeKB} KB) - ${preview.naturalWidth} × ${preview.naturalHeight}px`;
     };
   };
   reader.readAsDataURL(file);
 }
 
 // Convert submit
-document.getElementById("convertForm").addEventListener("submit", async (e) => {
+document.getElementById('convertForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!uploadedFile) return status.textContent = "❗ Upload an image first.";
-  const format = document.getElementById("format").value;
-  const formData = new FormData();
-  formData.append("image", uploadedFile);
-  formData.append("format", format);
-  status.textContent = "⏳ Converting...";
+
+  showLoading();
+  hideSuccess();
+
+  const formData = new FormData(e.target);
   try {
     const res = await fetch("/convert", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Conversion failed");
@@ -87,12 +93,15 @@ document.getElementById("convertForm").addEventListener("submit", async (e) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `converted_image.${format.toLowerCase()}`;
+    a.download = "converted_image.png"; // corrected download name
     document.body.appendChild(a);
     a.click();
     a.remove();
+    hideLoading();
+    showSuccess();
     status.textContent = "✅ Download started!";
   } catch (err) {
+    hideLoading();
     status.textContent = "❌ Error: " + err.message;
   }
 });
@@ -101,15 +110,19 @@ document.getElementById("convertForm").addEventListener("submit", async (e) => {
 document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!uploadedFile) return status.textContent = "❗ Upload an image first.";
+  
   const width = parseInt(document.getElementById("resizeWidth").value || "0");
   const height = parseInt(document.getElementById("resizeHeight").value || "0");
   const lockAspect = document.getElementById("lockAspectRatio").checked;
+  
   if (!width || !height) return status.textContent = "❗ Please enter dimensions.";
+  
   const formData = new FormData();
   formData.append("image", uploadedFile);
   formData.append("width", width);
   formData.append("height", height);
   formData.append("lock_aspect", lockAspect);
+  
   status.textContent = "⏳ Resizing...";
   try {
     const res = await fetch("/resize", { method: "POST", body: formData });
@@ -126,4 +139,10 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   } catch (err) {
     status.textContent = "❌ Error: " + err.message;
   }
+});
+
+// Dark Mode Toggle
+const toggleDarkMode = document.getElementById('toggleDarkMode');
+toggleDarkMode.addEventListener('click', () => {
+  document.documentElement.classList.toggle('dark');
 });
