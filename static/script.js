@@ -85,7 +85,10 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
   showLoading();
   hideSuccess();
 
-  const formData = new FormData(e.target);
+  const formData = new FormData();
+  formData.append('image', uploadedFile); // attach image manually
+  formData.append('format', document.getElementById('format').value); // attach selected format
+
   try {
     const res = await fetch("/convert", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Conversion failed");
@@ -93,7 +96,7 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "converted_image.png"; // corrected download name
+    a.download = "converted_image.png";
     document.body.appendChild(a);
     a.click();
     a.remove();
