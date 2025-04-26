@@ -1,47 +1,67 @@
 # 📸 SnapShift
 
-SnapShift is a clean, fast, and intuitive image tool that allows you to:
-- ✅ Convert images between PNG, JPEG, and PDF
-- 📐 Resize images by dimension while optionally locking the aspect ratio
+SnapShift is a modern, clean, and fast image tool that allows you to:
+- ✅ Convert images between PNG, JPEG, and PDF formats
+- 📐 Resize images while optionally locking the aspect ratio
 - 🔁 Drag-and-drop or browse files with real-time preview
+- 🌙 Toggle dark mode for a better viewing experience
 
 ---
 
 ## 🚀 Features
 
-- 🖼 Image preview before conversion or resizing
-- 🧠 Intelligent aspect ratio locking (for resizing)
-- ⚡ Fast, client-side UI with TailwindCSS
-- 🔧 Built using Python Flask + Pillow (PIL)
+- 🖼 Live image preview before conversion or resizing
+- 🧠 Aspect ratio locking (optional) for smart resizing
+- ⚡ Real-time UI updates with smooth transitions
+- 🌓 Dark mode toggle support
+- 🖱 Drag-and-drop image upload zone
+- 🎯 Clean mobile-responsive design
+- ✅ Loading spinner and success messages after processing
 
 ---
 
 ## 💻 Tech Stack
 
-| Frontend      | Backend    | Libraries         |
-|---------------|------------|-------------------|
-| HTML, CSS     | Flask      | Pillow (PIL)      |
-| TailwindCSS   | Python 3.x | Jinja2 Templates  |
+| Frontend | Backend  | Libraries  |
+|:--------|:---------|:-----------|
+| HTML, TailwindCSS, JavaScript | Flask (Python 3.x) | Pillow (PIL), Gunicorn |
 
 ---
+
+## 📁 Project Structure
+
+---
+snapshift/
+├── app.py                 # Flask backend app
+├── templates/
+│   └── index.html         # Frontend interface (HTML)
+├── static/
+│   ├── script.js          # Main frontend JS logic
+│   └── logo.png           # App logo
+├── requirements.txt       # Project dependencies
+└── README.md              # Project documentation
 
 ## 🛠 Setup & Run Locally
 
 ```bash
-# Clone the repo
+---
+
+## 🛠 How to Set Up Locally
+
+```bash
+# Clone the repository
 git clone https://github.com/your-username/snapshift.git
 cd snapshift
 
-# Create a virtual environment (optional but recommended)
+# (Optional) Create a virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the app
+# Run the Flask app
 python app.py
-```
 
 Then visit: [http://localhost:5050](http://localhost:5050)
 
@@ -61,21 +81,25 @@ snapshift/
 
 ---
 
-## 🧪 Example Use
+## 🧪 How to use Snapshift
 
-1. Drag and drop an image (or click to upload)
-2. Choose output format (PNG, JPEG, or PDF)
-3. Click **Convert** to download the new image
+	1.	Drag and drop or upload an image file (PNG, JPEG, etc.)
+	2.	Choose to Convert the format or Resize the dimensions
+	3.	Click the Convert or Resize button
+	4.	Wait for the spinner to finish processing
+	5.	Download the processed file automatically!
+
 
 ---
 
 ## 🌐 Live Demo
 
-> Coming soon to [Render](https://render.com) or GitHub Pages ✨
+ ✨ [Coming Soon - Hosted on Render.com] ✨
 
 ---
 
 ## 📸 Credits
+- ChatGpt
 - Icons by [Icons8](https://icons8.com)
 - Favicon generated using SnapShift’s custom design
 
