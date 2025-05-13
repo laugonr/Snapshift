@@ -12,24 +12,6 @@ const status = document.getElementById("status");
 let uploadedFile = null;
 
 // Helper functions
-function showLoading() {
-  document.getElementById('loadingSpinner').classList.remove('hidden');
-  status.textContent = "⏳ Processing...";
-}
-
-function hideLoading() {
-  document.getElementById('loadingSpinner').classList.add('hidden');
-  status.textContent = "";
-}
-
-function showSuccess() {
-  // Assuming there is a success indicator elsewhere, placeholder for symmetry
-}
-
-function hideSuccess() {
-  // Assuming there is a success indicator elsewhere, placeholder for symmetry
-}
-
 function triggerDownload(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -115,9 +97,9 @@ function handleImageUpload(file) {
 document.getElementById('convertForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  status.textContent = "";
-  showLoading();
-  hideSuccess();
+  document.getElementById("loadingMessage").classList.remove("hidden");
+  document.getElementById("successMessage").classList.add("hidden");
+  document.getElementById("errorMessage").classList.add("hidden");
 
   const formData = new FormData();
   if (cropper) {
@@ -139,11 +121,12 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
     const blob = await res.blob();
     const selectedFormat = document.getElementById('format').value.toLowerCase();
     triggerDownload(blob, `converted_image.${selectedFormat}`);
-    hideLoading();
-    showSuccess();
+    document.getElementById("loadingMessage").classList.add("hidden");
+    document.getElementById("successMessage").classList.remove("hidden");
     status.textContent = "✅ Download started!";
   } catch (err) {
-    hideLoading();
+    document.getElementById("loadingMessage").classList.add("hidden");
+    document.getElementById("errorMessage").classList.remove("hidden");
     status.textContent = "❌ Error: " + err.message;
   }
 });
@@ -175,6 +158,10 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   formData.append("height", height);
   formData.append("lock_aspect", lockAspect);
 
+  document.getElementById("loadingMessage").classList.remove("hidden");
+  document.getElementById("successMessage").classList.add("hidden");
+  document.getElementById("errorMessage").classList.add("hidden");
+
   status.textContent = "";
   status.textContent = "⏳ Resizing...";
   try {
@@ -182,8 +169,12 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error("Resize failed");
     const blob = await res.blob();
     triggerDownload(blob, "resized_image.png");
+    document.getElementById("loadingMessage").classList.add("hidden");
+    document.getElementById("successMessage").classList.remove("hidden");
     status.textContent = "✅ Download started!";
   } catch (err) {
+    document.getElementById("loadingMessage").classList.add("hidden");
+    document.getElementById("errorMessage").classList.remove("hidden");
     status.textContent = "❌ Error: " + err.message;
   }
 });

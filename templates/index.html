@@ -219,8 +219,9 @@
       <img src="{{ url_for('static', filename='mark.png') }}" alt="Success" class="w-6 h-6">
       <span class="text-green-600 font-medium text-sm">Download started!</span>
     </div>
-    <div id="errorMessage" class="hidden flex justify-center mt-4">
-      <img src="{{ url_for('static', filename='remove.png') }}" alt="Error" class="w-8 h-8">
+    <div id="errorMessage" class="hidden flex items-center justify-center mt-4 space-x-2">
+      <img src="{{ url_for('static', filename='remove.png') }}" alt="Error" class="w-6 h-6">
+      <span class="text-red-600 font-medium text-sm">Something went wrong.</span>
     </div>
   </main>
 

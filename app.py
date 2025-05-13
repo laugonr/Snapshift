@@ -62,8 +62,8 @@ def handle_convert():
         return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=filename)
 
     except Exception as e:
-        app.logger.error("Image conversion failed: %s", str(e))
-        return f"Error during conversion: {str(e)}", 500
+        app.logger.error("Conversion error: %s", str(e))
+        return "An error occurred during conversion.", 500
 
 def handle_resize():
     image_file = request.files.get('image')
@@ -80,20 +80,25 @@ def handle_resize():
     if width > 10000 or height > 10000:
         return "Dimensions too large", 400
 
-    img = Image.open(image_file.stream)
+    try:
+        img = Image.open(image_file.stream)
 
-    if lock_aspect:
-        aspect_ratio = img.width / img.height
-        if width / height > aspect_ratio:
-            width = int(height * aspect_ratio)
-        else:
-            height = int(width / aspect_ratio)
+        if lock_aspect:
+            aspect_ratio = img.width / img.height
+            if width / height > aspect_ratio:
+                width = int(height * aspect_ratio)
+            else:
+                height = int(width / aspect_ratio)
 
-    resized = img.resize((width, height))
-    buffer = BytesIO()
-    resized.save(buffer, format='PNG')
-    buffer.seek(0)
-    return send_file(buffer, mimetype='image/png', as_attachment=True, download_name='resized_image.png')
+        resized = img.resize((width, height))
+        buffer = BytesIO()
+        resized.save(buffer, format='PNG')
+        buffer.seek(0)
+        return send_file(buffer, mimetype='image/png', as_attachment=True, download_name='resized_image.png')
+
+    except Exception as e:
+        app.logger.error("Resize error: %s", str(e))
+        return "An error occurred during resizing.", 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
