@@ -180,10 +180,14 @@
     e.preventDefault();
     const format = document.getElementById('format').value.toLowerCase();
     document.getElementById('status').textContent = "⏳ Processing...";
-    fetch('/convert', {
-      method: 'POST',
-      body: new FormData(convertForm)
-    })
+    const formData = new FormData();
+    cropper.getCroppedCanvas().toBlob((blob) => {
+      formData.append('image', blob, 'cropped.png');
+      formData.append('format', format);
+      fetch('/convert', {
+        method: 'POST',
+        body: formData
+      })
       .then(response => response.blob())
       .then(blob => {
         const a = document.createElement('a');
@@ -197,6 +201,7 @@
       .catch(err => {
         document.getElementById('status').textContent = "❌ Error: " + err.message;
       });
+    });
   });
 </script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
