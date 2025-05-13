@@ -287,11 +287,16 @@
       formData.append("image", uploadedFile);
     }
     try {
-      // proceed with form submission using formData
-      // e.g., send via fetch or XMLHttpRequest
-      // Example:
-      // const response = await fetch('/resize', { method: 'POST', body: formData });
-      // if (!response.ok) throw new Error('Resize failed');
+      const response = await fetch('/resize', { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Resize failed');
+      const blob = await response.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "resized_image.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
       document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.remove("hidden");
