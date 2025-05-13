@@ -175,3 +175,45 @@ function updateMode() {
 }
 
 toggleDarkMode.addEventListener('click', updateMode);
+// --- Cropper.js Real-Time Cropping and Preview ---
+let cropper;
+
+imageInput.addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const img = document.getElementById('preview');
+    img.src = event.target.result;
+    img.onload = function () {
+      if (cropper) cropper.destroy();
+
+      cropper = new Cropper(img, {
+        viewMode: 1,
+        autoCropArea: 1,
+        responsive: true,
+        background: false,
+        ready() {
+          updateCroppedPreview();
+        },
+        crop() {
+          updateCroppedPreview();
+        }
+      });
+    };
+  };
+  reader.readAsDataURL(file);
+});
+
+function updateCroppedPreview() {
+  const canvas = document.getElementById('croppedPreview');
+  if (!cropper || !canvas) return;
+  const croppedCanvas = cropper.getCroppedCanvas({ width: 200 });
+  const ctx = canvas.getContext('2d');
+  canvas.classList.remove('hidden');
+  canvas.width = croppedCanvas.width;
+  canvas.height = croppedCanvas.height;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(croppedCanvas, 0, 0);
+}
