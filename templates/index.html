@@ -280,6 +280,26 @@
     }
   });
 </script>
+<script>
+  const resizeForm = document.getElementById('resizeForm');
+  resizeForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const formData = new FormData(resizeForm);
+    if (cropper) {
+      const croppedCanvas = cropper.getCroppedCanvas();
+      await new Promise(resolve => {
+        croppedCanvas.toBlob(blob => {
+          formData.append("image", blob, "cropped.png");
+          resolve();
+        });
+      });
+    } else {
+      formData.append("image", uploadedFile);
+    }
+    // proceed with form submission using formData
+    // e.g., send via fetch or XMLHttpRequest
+  });
+</script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
