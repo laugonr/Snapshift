@@ -130,7 +130,17 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
     if (!res.ok) throw new Error("Conversion failed");
     const blob = await res.blob();
     const selectedFormat = document.getElementById('format').value.toLowerCase();
-    triggerDownload(blob, `converted_image.${selectedFormat}`);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `converted_image.${selectedFormat}`;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, 1000);
     document.getElementById("loadingMessage").classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
     setTimeout(() => {
@@ -177,7 +187,17 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
     const res = await fetch("/resize", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Resize failed");
     const blob = await res.blob();
-    triggerDownload(blob, "resized_image.png");
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "resized_image.png";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }, 1000);
     document.getElementById("loadingMessage").classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
     setTimeout(() => {
