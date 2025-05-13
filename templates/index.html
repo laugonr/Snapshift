@@ -144,6 +144,16 @@
     <!-- Resize -->
     <div id="resizePanel" class="tab-panel hidden">
       <form id="resizeForm" class="space-y-4">
+        <div>
+          <label for="aspectRatio" class="block text-sm font-medium text-gray-700 mb-1">Aspect Ratio</label>
+          <select id="aspectRatio" class="w-full border border-gray-300 rounded-md p-2">
+            <option value="NaN">FreeForm</option>
+            <option value="1">1:1 (Square)</option>
+            <option value="4/3">4:3 (Monitor)</option>
+            <option value="14/9">14:9</option>
+            <option value="16/9">16:9 (Widescreen)</option>
+          </select>
+        </div>
         <div class="flex justify-between gap-4">
           <div class="w-1/2">
             <label for="resizeWidth" class="block text-sm font-medium text-gray-700">Width</label>
@@ -157,6 +167,9 @@
         <div class="flex items-center space-x-2">
           <input type="checkbox" id="lockAspectRatio" checked />
           <label for="lockAspectRatio" class="text-sm text-gray-600">Lock Aspect Ratio</label>
+        </div>
+        <div class="text-center">
+          <button type="button" id="resetCrop" class="mt-2 px-4 py-1 text-sm font-medium bg-gray-200 rounded hover:bg-gray-300 transition">Reset Crop</button>
         </div>
         <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white py-2 rounded-xl text-lg font-semibold shadow transition-all">
           Resize Image
@@ -174,6 +187,21 @@
   <footer class="mt-8 text-xs text-gray-400 text-center">
     &copy; 2025 SnapShift. All rights reserved.
   </footer>
+</footer>
+<script>
+  document.getElementById("aspectRatio").addEventListener("change", function () {
+    const value = parseFloat(this.value);
+    if (cropper) {
+      cropper.setAspectRatio(isNaN(value) ? NaN : value);
+    }
+  });
+
+  document.getElementById("resetCrop").addEventListener("click", function () {
+    if (cropper) {
+      cropper.reset();
+    }
+  });
+</script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
