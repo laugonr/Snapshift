@@ -282,8 +282,48 @@
     } else {
       formData.append("image", uploadedFile);
     }
-    // proceed with form submission using formData
-    // e.g., send via fetch or XMLHttpRequest
+    try {
+      // proceed with form submission using formData
+      // e.g., send via fetch or XMLHttpRequest
+      // Example:
+      // const response = await fetch('/resize', { method: 'POST', body: formData });
+      // if (!response.ok) throw new Error('Resize failed');
+      document.getElementById("errorMessage").classList.add("hidden");
+      document.getElementById("successMessage").classList.remove("hidden");
+    } catch (error) {
+      document.getElementById("successMessage").classList.add("hidden");
+      document.getElementById("errorMessage").classList.remove("hidden");
+    }
+  });
+</script>
+<script>
+  const convertForm = document.getElementById('convertForm');
+  convertForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const formData = new FormData(convertForm);
+    if (cropper) {
+      const croppedCanvas = cropper.getCroppedCanvas();
+      await new Promise(resolve => {
+        croppedCanvas.toBlob(blob => {
+          formData.append("image", blob, "cropped.png");
+          resolve();
+        });
+      });
+    } else {
+      formData.append("image", uploadedFile);
+    }
+    try {
+      // proceed with form submission using formData
+      // e.g., send via fetch or XMLHttpRequest
+      // Example:
+      // const response = await fetch('/convert', { method: 'POST', body: formData });
+      // if (!response.ok) throw new Error('Convert failed');
+      document.getElementById("errorMessage").classList.add("hidden");
+      document.getElementById("successMessage").classList.remove("hidden");
+    } catch (error) {
+      document.getElementById("successMessage").classList.add("hidden");
+      document.getElementById("errorMessage").classList.remove("hidden");
+    }
   });
 </script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
