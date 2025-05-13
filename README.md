@@ -74,9 +74,7 @@ Then visit: [http://localhost:5050](http://localhost:5050)
 
 ## 🌐 Live Demo
 
-> ✅ Hosted Live: [SnapShift on Render](https://your-render-url.onrender.com)
-
-_(Replace with your actual Render URL if needed.)_
+> ✅ Hosted Live: [SnapShift on Railway](https://snapshift-production.up.railway.app/)
 
 ---
 
