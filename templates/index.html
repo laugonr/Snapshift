@@ -174,6 +174,32 @@
   <footer class="mt-8 text-xs text-gray-400 text-center">
     &copy; 2025 SnapShift. All rights reserved.
   </footer>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+<script>
+  const convertForm = document.getElementById('convertForm');
+  convertForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const format = document.getElementById('format').value.toLowerCase();
+    document.getElementById('status').textContent = "⏳ Processing...";
+    fetch('/convert', {
+      method: 'POST',
+      body: new FormData(convertForm)
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `converted_image.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        document.getElementById('status').textContent = "✅ Download started!";
+      })
+      .catch(err => {
+        document.getElementById('status').textContent = "❌ Error: " + err.message;
+      });
+  });
+</script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

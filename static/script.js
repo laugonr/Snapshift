@@ -129,7 +129,8 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
     const res = await fetch("/convert", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Conversion failed");
     const blob = await res.blob();
-    triggerDownload(blob, "converted_image.png");
+    const selectedFormat = document.getElementById('format').value.toLowerCase();
+    triggerDownload(blob, `converted_image.${selectedFormat}`);
     hideLoading();
     showSuccess();
     status.textContent = "✅ Download started!";
