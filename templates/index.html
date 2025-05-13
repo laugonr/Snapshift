@@ -156,6 +156,26 @@
         </div>
         <div class="flex justify-between gap-4">
           <div class="w-1/2">
+            <label class="block text-sm font-medium text-gray-700">Width</label>
+            <input type="number" id="cropWidth" class="w-full border border-gray-300 rounded-md p-2 bg-gray-100" readonly />
+          </div>
+          <div class="w-1/2">
+            <label class="block text-sm font-medium text-gray-700">Height</label>
+            <input type="number" id="cropHeight" class="w-full border border-gray-300 rounded-md p-2 bg-gray-100" readonly />
+          </div>
+        </div>
+        <div class="flex justify-between gap-4">
+          <div class="w-1/2">
+            <label class="block text-sm font-medium text-gray-700">X</label>
+            <input type="number" id="cropX" class="w-full border border-gray-300 rounded-md p-2 bg-gray-100" readonly />
+          </div>
+          <div class="w-1/2">
+            <label class="block text-sm font-medium text-gray-700">Y</label>
+            <input type="number" id="cropY" class="w-full border border-gray-300 rounded-md p-2 bg-gray-100" readonly />
+          </div>
+        </div>
+        <div class="flex justify-between gap-4">
+          <div class="w-1/2">
             <label for="resizeWidth" class="block text-sm font-medium text-gray-700">Width</label>
             <input type="number" id="resizeWidth" class="w-full border border-gray-300 rounded-md p-2" placeholder="Width" required min="1" />
           </div>
@@ -201,6 +221,20 @@
       cropper.reset();
     }
   });
+</script>
+<script>
+  function updateCropInputs(data) {
+    document.getElementById("cropWidth").value = Math.round(data.width);
+    document.getElementById("cropHeight").value = Math.round(data.height);
+    document.getElementById("cropX").value = Math.round(data.x);
+    document.getElementById("cropY").value = Math.round(data.y);
+  }
+
+  if (window.cropper) {
+    cropper.on("crop", function (e) {
+      updateCropInputs(e.detail);
+    });
+  }
 </script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
