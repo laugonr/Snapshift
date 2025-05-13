@@ -44,11 +44,15 @@ def handle_convert():
         buffer = BytesIO()
 
         if output_format == 'PDF':
-            if img.mode in ['RGBA', 'P', 'LA']:
-                img = img.convert('RGB')
+            img = img.convert('RGB')
             img.save(buffer, format='PDF')
             mimetype = 'application/pdf'
             filename = 'converted_image.pdf'
+        elif output_format == 'JPEG':
+            img = img.convert('RGB')
+            img.save(buffer, format='JPEG', quality=95)
+            mimetype = 'image/jpeg'
+            filename = 'converted_image.jpeg'
         else:
             img.save(buffer, format=output_format)
             mimetype = f'image/{output_format.lower()}'
