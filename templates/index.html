@@ -211,6 +211,10 @@
     </div>
 
     <p id="status" class="text-sm text-center text-gray-500"></p>
+    <div id="loadingMessage" class="hidden flex items-center justify-center mt-4 space-x-2">
+      <img src="{{ url_for('static', filename='loading.png') }}" alt="Loading..." class="w-6 h-6 animate-spin">
+      <span class="text-gray-600 font-medium text-sm">Processing...</span>
+    </div>
     <div id="successMessage" class="hidden flex items-center justify-center mt-4 space-x-2">
       <img src="{{ url_for('static', filename='mark.png') }}" alt="Success" class="w-6 h-6">
       <span class="text-green-600 font-medium text-sm">Download started!</span>
@@ -267,6 +271,9 @@
   const resizeForm = document.getElementById('resizeForm');
   resizeForm.addEventListener('submit', async function(event) {
     event.preventDefault();
+    document.getElementById("loadingMessage").classList.remove("hidden");
+    document.getElementById("successMessage").classList.add("hidden");
+    document.getElementById("errorMessage").classList.add("hidden");
     const formData = new FormData(resizeForm);
     if (cropper) {
       const croppedCanvas = cropper.getCroppedCanvas();
@@ -285,9 +292,11 @@
       // Example:
       // const response = await fetch('/resize', { method: 'POST', body: formData });
       // if (!response.ok) throw new Error('Resize failed');
+      document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.remove("hidden");
     } catch (error) {
+      document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.remove("hidden");
     }
@@ -297,6 +306,9 @@
   const convertForm = document.getElementById('convertForm');
   convertForm.addEventListener('submit', async function(event) {
     event.preventDefault();
+    document.getElementById("loadingMessage").classList.remove("hidden");
+    document.getElementById("successMessage").classList.add("hidden");
+    document.getElementById("errorMessage").classList.add("hidden");
     const formData = new FormData(convertForm);
     if (cropper) {
       const croppedCanvas = cropper.getCroppedCanvas();
@@ -315,9 +327,11 @@
       // Example:
       // const response = await fetch('/convert', { method: 'POST', body: formData });
       // if (!response.ok) throw new Error('Convert failed');
+      document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.remove("hidden");
     } catch (error) {
+      document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.remove("hidden");
     }
