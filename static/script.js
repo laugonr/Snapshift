@@ -8,7 +8,6 @@ const imageInput = document.getElementById("imageInput");
 const preview = document.getElementById("preview");
 const previewContainer = document.getElementById("previewContainer");
 const imageInfo = document.getElementById("imageInfo");
-const status = document.getElementById("status");
 let uploadedFile = null;
 
 // Helper functions
@@ -98,13 +97,7 @@ function handleImageUpload(file) {
       viewMode: 1,
       autoCropArea: 1,
       responsive: true,
-      background: false,
-      ready() {
-        updateCroppedPreview();
-      },
-      crop() {
-        updateCroppedPreview();
-      }
+      background: false
     });
   };
   reader.readAsDataURL(file);
@@ -140,24 +133,25 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
     triggerDownload(blob, `converted_image.${selectedFormat}`);
     document.getElementById("loadingMessage").classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
-    status.textContent = "✅ Download started!";
+    setTimeout(() => {
+      document.getElementById("successMessage").classList.add("hidden");
+    }, 5000);
   } catch (err) {
     document.getElementById("loadingMessage").classList.add("hidden");
     document.getElementById("errorMessage").classList.remove("hidden");
-    status.textContent = "❌ Error: " + err.message;
   }
 });
 
 // Resize submit
 document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!uploadedFile) return status.textContent = "❗ Upload an image first.";
+  if (!uploadedFile) return;
 
   const width = parseInt(document.getElementById("resizeWidth").value || "0");
   const height = parseInt(document.getElementById("resizeHeight").value || "0");
   const lockAspect = document.getElementById("lockAspectRatio").checked;
 
-  if (!width || !height) return status.textContent = "❗ Please enter dimensions.";
+  if (!width || !height) return;
 
   const formData = new FormData();
   if (cropper) {
@@ -179,8 +173,6 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   document.getElementById("successMessage").classList.add("hidden");
   document.getElementById("errorMessage").classList.add("hidden");
 
-  status.textContent = "";
-  status.textContent = "⏳ Resizing...";
   try {
     const res = await fetch("/resize", { method: "POST", body: formData });
     if (!res.ok) throw new Error("Resize failed");
@@ -188,11 +180,12 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
     triggerDownload(blob, "resized_image.png");
     document.getElementById("loadingMessage").classList.add("hidden");
     document.getElementById("successMessage").classList.remove("hidden");
-    status.textContent = "✅ Download started!";
+    setTimeout(() => {
+      document.getElementById("successMessage").classList.add("hidden");
+    }, 5000);
   } catch (err) {
     document.getElementById("loadingMessage").classList.add("hidden");
     document.getElementById("errorMessage").classList.remove("hidden");
-    status.textContent = "❌ Error: " + err.message;
   }
 });
 
@@ -218,15 +211,3 @@ function updateMode() {
 toggleDarkMode.addEventListener('click', updateMode);
 // --- Cropper.js Real-Time Cropping and Preview ---
 let cropper;
-
-function updateCroppedPreview() {
-  const canvas = document.getElementById('croppedPreview');
-  if (!cropper || !canvas) return;
-  const croppedCanvas = cropper.getCroppedCanvas({ width: 200 });
-  const ctx = canvas.getContext('2d');
-  canvas.classList.remove('hidden');
-  canvas.width = croppedCanvas.width;
-  canvas.height = croppedCanvas.height;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(croppedCanvas, 0, 0);
-}
