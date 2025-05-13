@@ -53,14 +53,31 @@ uploadZone.addEventListener("drop", (e) => {
   e.preventDefault();
   uploadZone.classList.remove("border-red-400", "bg-red-50", "scale-105");
   const files = Array.from(e.dataTransfer.files);
+  if (!files || files.length === 0) return;
   imageInput.files = e.dataTransfer.files;
-  handleImageUpload(files[0]);
+
+  document.getElementById("loadingMessage").classList.remove("hidden");
+  document.getElementById("successMessage").classList.add("hidden");
+  document.getElementById("errorMessage").classList.add("hidden");
+
+  setTimeout(() => {
+    document.getElementById("loadingMessage").classList.add("hidden");
+    handleImageUpload(files[0]);
+  }, 8000);
 });
 
 imageInput.addEventListener("change", () => {
-  if (imageInput.files.length > 0) {
-    handleImageUpload(imageInput.files[0]);
-  }
+  const files = imageInput.files;
+  if (!files || files.length === 0) return;
+
+  document.getElementById("loadingMessage").classList.remove("hidden");
+  document.getElementById("successMessage").classList.add("hidden");
+  document.getElementById("errorMessage").classList.add("hidden");
+
+  setTimeout(() => {
+    document.getElementById("loadingMessage").classList.add("hidden");
+    handleImageUpload(files[0]);
+  }, 8000);
 });
 
 function handleImageUpload(file) {
