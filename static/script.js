@@ -160,7 +160,17 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   if (!width || !height) return status.textContent = "❗ Please enter dimensions.";
 
   const formData = new FormData();
-  formData.append("image", uploadedFile);
+  if (cropper) {
+    const croppedCanvas = cropper.getCroppedCanvas();
+    await new Promise(resolve => {
+      croppedCanvas.toBlob(blob => {
+        formData.append("image", blob, "cropped.png");
+        resolve();
+      });
+    });
+  } else {
+    formData.append("image", uploadedFile);
+  }
   formData.append("width", width);
   formData.append("height", height);
   formData.append("lock_aspect", lockAspect);
