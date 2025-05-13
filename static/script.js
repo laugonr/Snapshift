@@ -120,7 +120,17 @@ document.getElementById('convertForm').addEventListener('submit', async (e) => {
   hideSuccess();
 
   const formData = new FormData();
-  formData.append('image', uploadedFile); // attach image manually
+  if (cropper) {
+    const croppedCanvas = cropper.getCroppedCanvas();
+    await new Promise(resolve => {
+      croppedCanvas.toBlob(blob => {
+        formData.append('image', blob, 'cropped.png');
+        resolve();
+      });
+    });
+  } else {
+    formData.append('image', uploadedFile);
+  }
   formData.append('format', document.getElementById('format').value); // attach selected format
 
   try {
