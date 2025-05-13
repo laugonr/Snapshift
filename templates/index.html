@@ -205,34 +205,6 @@
   <script>
     let cropper;
 
-    document.getElementById('imageInput').addEventListener('change', function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const img = document.getElementById('preview');
-        img.src = event.target.result;
-        img.onload = function () {
-          if (cropper) cropper.destroy();
-
-          cropper = new Cropper(img, {
-            viewMode: 1,
-            autoCropArea: 1,
-            responsive: true,
-            background: false,
-            ready() {
-              updateCroppedPreview();
-            },
-            crop() {
-              updateCroppedPreview();
-            }
-          });
-        };
-      };
-      reader.readAsDataURL(file);
-    });
-
     function updateCroppedPreview() {
       const canvas = document.getElementById('croppedPreview');
       if (!cropper || !canvas) return;
