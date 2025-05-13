@@ -155,8 +155,23 @@ document.getElementById("resizeForm").addEventListener("submit", async (e) => {
   }
 });
 
-// Dark Mode Toggle
+// Dark Mode Toggle with persistence and label update
 const toggleDarkMode = document.getElementById('toggleDarkMode');
-toggleDarkMode.addEventListener('click', () => {
-  document.documentElement.classList.toggle('dark');
-});
+const rootElement = document.documentElement;
+const modeText = document.getElementById('darkModeText');
+
+// Load saved mode
+if (localStorage.getItem('theme') === 'dark') {
+  rootElement.classList.add('dark');
+  if (modeText) modeText.textContent = 'Light Mode';
+} else {
+  if (modeText) modeText.textContent = 'Dark Mode';
+}
+
+function updateMode() {
+  const isDark = rootElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  if (modeText) modeText.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+
+toggleDarkMode.addEventListener('click', updateMode);
