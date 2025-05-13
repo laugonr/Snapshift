@@ -114,7 +114,7 @@
       <p class="text-gray-600 text-sm">
         <strong>Drag & drop</strong> an image, or <span class="font-semibold text-black">browse</span>
       </p>
-      <input type="file" id="imageInput" accept="image/*" class="hidden" multiple />
+      <input type="file" id="imageInput" accept="image/*" class="hidden" />
     </div>
 
     <!-- Preview -->
@@ -124,12 +124,6 @@
       <p id="imageInfo" class="text-xs text-gray-500 mt-2"></p>
     </div>
 
-    <div id="imageGrid" class="hidden mt-4 grid grid-cols-2 gap-4"></div>
-    <div id="bulkActions" class="hidden mt-4 text-center">
-      <button id="resizeAllBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
-        Resize All Images
-      </button>
-    </div>
 
     <!-- Convert -->
     <div id="convertPanel" class="tab-panel">

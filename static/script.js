@@ -10,7 +10,6 @@ const previewContainer = document.getElementById("previewContainer");
 const imageInfo = document.getElementById("imageInfo");
 const status = document.getElementById("status");
 let uploadedFile = null;
-let uploadedFiles = [];
 
 // Helper functions
 function showLoading() {
@@ -73,14 +72,12 @@ uploadZone.addEventListener("drop", (e) => {
   uploadZone.classList.remove("border-red-400", "bg-red-50", "scale-105");
   const files = Array.from(e.dataTransfer.files);
   imageInput.files = e.dataTransfer.files;
-  uploadedFiles = files;
-  renderImageGrid(uploadedFiles);
+  handleImageUpload(files[0]);
 });
 
 imageInput.addEventListener("change", () => {
   if (imageInput.files.length > 0) {
-    uploadedFiles = Array.from(imageInput.files);
-    renderImageGrid(uploadedFiles);
+    handleImageUpload(imageInput.files[0]);
   }
 });
 
@@ -205,53 +202,3 @@ function updateCroppedPreview() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(croppedCanvas, 0, 0);
 }
-
-function renderImageGrid(files) {
-  const grid = document.getElementById("imageGrid");
-  const actions = document.getElementById("bulkActions");
-  grid.innerHTML = "";
-  files.forEach((file, index) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = document.createElement("img");
-      img.src = e.target.result;
-      img.className = "rounded-xl border border-gray-300 shadow-md w-full h-auto";
-      grid.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  });
-  grid.classList.remove("hidden");
-  actions.classList.remove("hidden");
-}
-
-document.getElementById("resizeAllBtn").addEventListener("click", async () => {
-  const width = parseInt(document.getElementById("resizeWidth").value || "0");
-  const height = parseInt(document.getElementById("resizeHeight").value || "0");
-  const lockAspect = document.getElementById("lockAspectRatio").checked;
-
-  if (!width || !height) {
-    status.textContent = "❗ Please enter valid dimensions.";
-    return;
-  }
-
-  for (const file of uploadedFiles) {
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("width", width);
-    formData.append("height", height);
-    formData.append("lock_aspect", lockAspect);
-
-    const res = await fetch("/resize", { method: "POST", body: formData });
-    if (res.ok) {
-      const blob = await res.blob();
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = `resized_${file.name}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-  }
-
-  status.textContent = "✅ All images resized!";
-});
