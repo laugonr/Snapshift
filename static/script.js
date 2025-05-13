@@ -95,6 +95,20 @@ function handleImageUpload(file) {
       const fileSizeKB = (file.size / 1024).toFixed(1);
       imageInfo.textContent = `${file.name} (${fileSizeKB} KB) - ${preview.naturalWidth} × ${preview.naturalHeight}px`;
     };
+    if (cropper) cropper.destroy();
+
+    cropper = new Cropper(preview, {
+      viewMode: 1,
+      autoCropArea: 1,
+      responsive: true,
+      background: false,
+      ready() {
+        updateCroppedPreview();
+      },
+      crop() {
+        updateCroppedPreview();
+      }
+    });
   };
   reader.readAsDataURL(file);
 }
@@ -177,34 +191,6 @@ function updateMode() {
 toggleDarkMode.addEventListener('click', updateMode);
 // --- Cropper.js Real-Time Cropping and Preview ---
 let cropper;
-
-imageInput.addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    const img = document.getElementById('preview');
-    img.src = event.target.result;
-    img.onload = function () {
-      if (cropper) cropper.destroy();
-
-      cropper = new Cropper(img, {
-        viewMode: 1,
-        autoCropArea: 1,
-        responsive: true,
-        background: false,
-        ready() {
-          updateCroppedPreview();
-        },
-        crop() {
-          updateCroppedPreview();
-        }
-      });
-    };
-  };
-  reader.readAsDataURL(file);
-});
 
 function updateCroppedPreview() {
   const canvas = document.getElementById('croppedPreview');
