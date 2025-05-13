@@ -327,11 +327,16 @@
       formData.append("image", uploadedFile);
     }
     try {
-      // proceed with form submission using formData
-      // e.g., send via fetch or XMLHttpRequest
-      // Example:
-      // const response = await fetch('/convert', { method: 'POST', body: formData });
-      // if (!response.ok) throw new Error('Convert failed');
+      const response = await fetch('/convert', { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Convert failed');
+      const blob = await response.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `converted_image.${document.getElementById('format').value.toLowerCase()}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
       document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.remove("hidden");
