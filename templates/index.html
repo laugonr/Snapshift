@@ -10,6 +10,12 @@
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind dark mode class strategy
+    tailwind.config = {
+      darkMode: 'class'
+    };
+  </script>
   <style>
     @keyframes fade-in {
       from { opacity: 0; transform: translateY(20px); }
@@ -20,43 +26,74 @@
     }
     
     /* Dark Mode Styles */
+    body {
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
     .dark body {
-      background-color: #1a202c;
-      color: #e2e8f0;
+      background-color: #121212;
+      color: #f0f0f0;
     }
+
+    .dark main,
     .dark .container {
-      background-color: #2d3748;
-      color: #e2e8f0;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
+
     .dark #uploadZone {
-      background-color: #4a5568;
-      border-color: #718096;
+      background-color: #2a2a2a;
+      border-color: #444;
+      color: #f0f0f0;
     }
+
+    .dark input,
+    .dark select,
+    .dark textarea {
+      background-color: #2d2d2d;
+      color: #f0f0f0;
+      border-color: #444;
+    }
+
     .dark button {
       background-color: #e53e3e;
-      color: #e2e8f0;
+      color: #f0f0f0;
     }
-    .dark input, .dark select, .dark label {
-      background-color: #2d3748;
-      color: #e2e8f0;
-    }
+
     .dark .tab-button {
-      background-color: #4a5568;
-      color: #e2e8f0;
+      background-color: #333;
+      color: #f0f0f0;
     }
+
+    .dark .text-gray-500,
+    .dark .text-gray-600,
+    .dark .text-gray-700,
+    .dark .text-gray-800,
+    .dark .text-gray-900 {
+      color: #ccc !important;
+    }
+
     .dark #status,
     .dark #imageInfo,
     .dark p,
     .dark h1,
     .dark label {
-      color: #e2e8f0 !important;
+      color: #f0f0f0 !important;
+    }
+
+    .dark footer {
+      color: #888;
+    }
+    .dark #uploadZone p span {
+      color: #f0f0f0;
     }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col p-6">
   <div class="flex justify-end max-w-xl w-full mx-auto mb-2">
     <button id="toggleDarkMode" class="px-4 py-1 rounded-md font-medium bg-red-500 text-white shadow-md transition-transform duration-300 hover:scale-105 text-sm">
-      ▓ Dark Mode
+      <span id="darkModeText">Dark Mode</span>
     </button>
   </div>
 <main class="w-full max-w-xl bg-white rounded-2xl shadow-md p-4 md:p-6 space-y-6 flex-grow mx-auto animate-fade-in">
@@ -141,6 +178,31 @@
     &copy; 2025 SnapShift. All rights reserved.
   </footer>
 
+  <script>
+    const toggleButton = document.getElementById('toggleDarkMode');
+    const rootElement = document.documentElement;
+    const modeText = document.getElementById('darkModeText');
+
+    // Load saved mode
+    if (localStorage.getItem('theme') === 'dark') {
+      rootElement.classList.add('dark');
+    }
+
+    function updateToggleText() {
+      modeText.textContent = rootElement.classList.contains('dark') ? 'Light Mode' : 'Dark Mode';
+    }
+    updateToggleText();
+
+    toggleButton.addEventListener('click', () => {
+      rootElement.classList.toggle('dark');
+      if (rootElement.classList.contains('dark')) {
+        localStorage.setItem('theme', 'dark');
+      } else {
+        localStorage.setItem('theme', 'light');
+      }
+    });
+    toggleButton.addEventListener('click', updateToggleText);
+  </script>
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
