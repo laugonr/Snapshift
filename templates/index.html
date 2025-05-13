@@ -299,7 +299,10 @@
 
       document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.add("hidden");
-      document.getElementById("successMessage").classList.remove("hidden");
+
+      setTimeout(() => {
+        document.getElementById("successMessage").classList.remove("hidden");
+      }, 500); // slight delay to ensure clean transition
     } catch (error) {
       document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.add("hidden");
@@ -339,7 +342,10 @@
 
       document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("errorMessage").classList.add("hidden");
-      document.getElementById("successMessage").classList.remove("hidden");
+
+      setTimeout(() => {
+        document.getElementById("successMessage").classList.remove("hidden");
+      }, 500); // slight delay to ensure clean transition
     } catch (error) {
       document.getElementById("loadingMessage").classList.add("hidden");
       document.getElementById("successMessage").classList.add("hidden");
